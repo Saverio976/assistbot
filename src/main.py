@@ -1,6 +1,7 @@
 import sys
+from typing import Generator
 
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer, pipeline, Pipeline
 import torch
 
 def get_model():
@@ -52,16 +53,18 @@ class Sequence:
         )
 
 
-def get_generation(formated_prompt, process):
+def get_generation(formated_prompt: str, process: Pipeline, answers: int):
     sequences = process(
         formated_prompt,
         do_sample=True,
         top_k=50,
         top_p = 0.7,
-        num_return_sequences=3,
+        num_return_sequences=answers,
         repetition_penalty=1.1,
         max_new_tokens=500,
     )
+    if not isinstance(sequences, (list, torch.Generator, Generator)):
+        return []
     return list(map(lambda x: Sequence.from_generated_text(x["generated_text"]), sequences))
 
 
@@ -69,10 +72,14 @@ def main():
     prompt = sys.argv[1]
     formated_prompt = get_prompt(prompt)
 
+    answers = 1
+    if len(sys.argv) > 2:
+        answers = int(sys.argv[2])
+
     model = get_model()
     process = get_process(model)
 
-    for seq in get_generation(formated_prompt, process):
-        print(f"------------------------\n{seq.prompt}:\n{seq.answer}\n")
+    for seq in get_generation(formated_prompt, process, answers):
+        print(f"------------------------\n:: {seq.prompt} ::\n{seq.answer}\n")
 
 main()
