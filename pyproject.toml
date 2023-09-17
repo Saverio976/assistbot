@@ -1,0 +1,5 @@
+[tool.pyright]
+include = ["src"]
+defineConstant = { DEBUG = true }
+venv = ".venv"
+venvPath = "."
