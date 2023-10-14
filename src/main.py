@@ -5,7 +5,8 @@ from transformers import AutoTokenizer, pipeline, Pipeline
 import torch
 
 def get_model():
-    return "PY007/TinyLlama-1.1B-Chat-v0.1"
+    # return "PY007/TinyLlama-1.1B-Chat-v0.1"
+    return "PY007/TinyLlama-1.1B-Chat-v0.3"
 
 
 def get_process(model):
